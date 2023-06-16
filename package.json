@@ -1,0 +1,61 @@
+{
+  "name": "@kitn/dope",
+  "version": "0.0.2",
+  "description": "Wrap function with cache",
+  "keywords": [
+    "dope",
+    "wrap",
+    "cache",
+    "function"
+  ],
+  "author": "Dylan Li <xiaoboleee@gmail.com>",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "module": "esm/index.js",
+  "types": "types/index.d.ts",
+  "files": [
+    "README.md",
+    "package.json",
+    "esm",
+    "lib",
+    "types",
+    "!**/*.test.js",
+    "!**/*.test.js.map",
+    "!**/*.test.d.ts",
+    "!**/*.test.d.ts.map"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "test": "cross-env TS_NODE_FILES=true mocha src/**/*.test.ts",
+    "lint": "eslint src",
+    "tsc": "tsc",
+    "start": "cross-env TS_NODE_FILES=true mocha --watch src/**/*.test.ts",
+    "build:esm": "tsc --module ESNext --outDir esm",
+    "build:lib": "tsc --module CommonJS --outDir lib",
+    "build:types": "tsc --declaration --declarationMap --emitDeclarationOnly --outDir types",
+    "build": "npm run build:esm && npm run build:lib && npm run build:types",
+    "clear": "del esm lib types",
+    "prepublish": "npm run clear && npm run build"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.3.1",
+    "@types/sinon": "^10.0.15",
+    "@typescript-eslint/eslint-plugin": "^5.59.11",
+    "@typescript-eslint/parser": "^5.59.11",
+    "chai": "^4.3.7",
+    "cross-env": "^7.0.3",
+    "del-cli": "^5.0.0",
+    "eslint": "^8.42.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "mocha": "^10.2.0",
+    "sinon": "^15.1.2",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.5.3",
+    "typescript": "^5.1.3"
+  }
+}

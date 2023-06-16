@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "lib": [
+      "dom",
+      "es2017",
+      "es2018",
+      "es2019",
+      "es2020",
+      "es2021"
+    ],
+    "noEmitOnError": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
+    "pretty": true,
+    "strict": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "useUnknownInCatchVariables": true,
+    "preserveWatchOutput": true,
+    "rootDir": "src",
+    "baseUrl": ".",
+  },
+  "include": [
+    "src",
+  ]
+}
