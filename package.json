@@ -1,6 +1,6 @@
 {
   "name": "@kitn/dope",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Wrap function with cache",
   "keywords": [
     "dope",
@@ -9,7 +9,7 @@
     "function"
   ],
   "author": "Dylan Li <xiaoboleee@gmail.com>",
-  "license": "MIT",
+  "license": "ISC",
   "main": "lib/index.js",
   "module": "esm/index.js",
   "types": "types/index.d.ts",
@@ -24,6 +24,14 @@
     "!**/*.test.d.ts",
     "!**/*.test.d.ts.map"
   ],
+  "homepage": "https://github.com/dylan-kitn/dope",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dylan-kitn/dope"
+  },
+  "bugs": {
+    "url": "https://github.com/dylan-kitn/dope/issues"
+  },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"

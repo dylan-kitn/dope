@@ -21,16 +21,32 @@ export function wrapFnInCache<Fn extends Func>(
         : 10
     );
 
-  return function(this: ThisType<Fn> | void, ...args: Parameters<Fn>): ReturnType<Fn> {
+  func.hasCache = (key: string) => cache.has(key);
+
+  return func;
+
+  function func(this: ThisType<Fn> | void, ...args: Parameters<Fn>): ReturnType<Fn> {
     const key = (toKey || defaultToKey)(this, ...args);
+    try {
+      const retInCache = cache.get(key);
+      if (retInCache !== undefined) {
+        return retInCache;
+      }
+  
+      const ret = fn.call(this, ...args)!;
+      cache.set(key, ret);
 
-    const retInCache = cache.get(key);
-    if (retInCache !== undefined) {
-      return retInCache;
+      if (ret.catch) {
+        return ret.catch((err: unknown) => {
+          cache.del(key);
+          throw err;
+        });
+      } else {
+        return ret;
+      }
+    } catch (err: unknown) {
+      cache.del(key);
+      throw err;
     }
-
-    const ret = fn.call(this, ...args)!;
-    cache.set(key, ret);
-    return ret;
-  };
+  }
 }

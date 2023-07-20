@@ -3,6 +3,7 @@ export interface Func<ARGS extends any[] = any[], RET = any> {
 }
 export interface FuncWrappedInCache<Fn extends Func> {
   (this: ThisType<Fn> | void, ...args: Parameters<Fn>): ReturnType<Fn>;
+  hasCache: (key: string) => boolean;
 }
 export interface FuncToKey<Fn extends Func> {
   (that: ThisType<Fn> | void, ...args: Parameters<Fn>): string;
