@@ -11,7 +11,7 @@ export function wrapFnInCache<Fn extends Func>(
 ): FuncWrappedInCache<Fn> {
   const { toKey, lru = true } = Object.prototype.toString.call(arg).slice(8, -1) === 'Function'
     ? { toKey: <FuncToKey<Fn>>arg, lru: undefined }
-    : <FuncWrapOpts<Fn>>arg;
+    : <FuncWrapOpts<Fn>>(arg || {});
 
   const cache = !lru
     ? cacheINF<string, ReturnType<Fn>>()

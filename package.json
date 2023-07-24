@@ -1,6 +1,6 @@
 {
   "name": "@kitn/dope",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Wrap function with cache",
   "keywords": [
     "dope",
