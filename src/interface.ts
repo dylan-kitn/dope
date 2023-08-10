@@ -1,16 +1,20 @@
 export interface Func<ARGS extends any[] = any[], RET = any> {
   (...args: ARGS): RET;
 }
-export interface FuncWrappedInCache<Fn extends Func> {
-  (this: ThisType<Fn> | void, ...args: Parameters<Fn>): ReturnType<Fn>;
-  hasCache: (key: string) => boolean;
+export type Key = string | number;
+export interface FuncToKey<Fn extends Func, K extends Key> {
+  (that: FuncWrappedInCache<Fn, FuncToKey<Fn, K>> | ThisType<Fn> | void, ...args: Parameters<Fn>): K;
 }
-export interface FuncToKey<Fn extends Func> {
-  (that: ThisType<Fn> | void, ...args: Parameters<Fn>): string;
-}
-export interface FuncWrapOpts<Fn extends Func> {
-  toKey?: FuncToKey<Fn>;
+export interface FuncWrapOpts<Fn extends Func, FnToKey extends FuncToKey<Fn, Key>> {
+  toKey?: FnToKey;
   lru?: boolean | number;
+}
+export interface FuncWrappedInCache<Fn extends Func, FnToKey extends FuncToKey<Fn, Key>> {
+  (this: ThisType<Fn> | void, ...args: Parameters<Fn>): ReturnType<Fn>;
+  hasCache: (key: ReturnType<FnToKey>) => boolean;
+  rmFromCache: (key: ReturnType<FnToKey>) => void;
+  clearCache: () => void;
+  forceRerun: (this: FuncWrappedInCache<Fn, FnToKey> | ThisType<Fn> | void, ...args: Parameters<Fn>) => ReturnType<Fn>;
 }
 export interface Cache<K, V> {
   readonly size: number;

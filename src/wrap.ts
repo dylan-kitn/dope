@@ -1,32 +1,60 @@
 import cacheINF from './cache_inf';
 import cacheLRU from './cache_lru';
-import type { Func, FuncToKey, FuncWrapOpts, FuncWrappedInCache } from './interface';
+import type { Func, FuncToKey, FuncWrapOpts, FuncWrappedInCache, Key } from './interface';
 import { defaultToKey } from './util';
 
-export function wrapFnInCache<Fn extends Func>(fn: Fn, toKey?: FuncToKey<Fn>): FuncWrappedInCache<Fn>;
-export function wrapFnInCache<Fn extends Func>(fn: Fn, opts?: FuncWrapOpts<Fn>): FuncWrappedInCache<Fn>;
-export function wrapFnInCache<Fn extends Func>(
+export function wrapFnInCache<
+  Fn extends Func,
+  FnToKey extends FuncToKey<Fn, Key> = FuncToKey<Fn, string>
+>(
   fn: Fn,
-  arg?: FuncToKey<Fn> | FuncWrapOpts<Fn>
-): FuncWrappedInCache<Fn> {
-  const { toKey, lru = true } = Object.prototype.toString.call(arg).slice(8, -1) === 'Function'
-    ? { toKey: <FuncToKey<Fn>>arg, lru: undefined }
-    : <FuncWrapOpts<Fn>>(arg || {});
+  toKey: FnToKey
+): FuncWrappedInCache<Fn, FnToKey>;
+
+export function wrapFnInCache<
+  Fn extends Func,
+  FnToKey extends FuncToKey<Fn, Key> = FuncToKey<Fn, string>
+>(
+  fn: Fn,
+  opts?: FuncWrapOpts<Fn, FnToKey>
+): FuncWrappedInCache<Fn, FnToKey>;
+
+export function wrapFnInCache<
+  Fn extends Func,
+  FnToKey extends FuncToKey<Fn, Key> = FuncToKey<Fn, string>
+>(
+  fn: Fn,
+  arg?: FnToKey | FuncWrapOpts<Fn, FnToKey>
+): FuncWrappedInCache<Fn, FnToKey> {
+  type K = ReturnType<FnToKey>;
+
+  const { toKey: toKeyOrigin, lru = true } = Object.prototype.toString.call(arg).slice(8, -1) === 'Function'
+    ? { toKey: <FnToKey>arg, lru: undefined }
+    : <FuncWrapOpts<Fn, FnToKey>>(arg || {});
+
+  const toKey = toKeyOrigin || (defaultToKey as unknown as FnToKey);
 
   const cache = !lru
-    ? cacheINF<string, ReturnType<Fn>>()
-    : cacheLRU<string, ReturnType<Fn>>(
-      Object.prototype.toString.call(lru).slice(8, -1) === 'Number'
-        ? <number>lru
-        : 10
-    );
+    ? cacheINF<K, ReturnType<Fn>>()
+    : cacheLRU<K, ReturnType<Fn>>(
+        Object.prototype.toString.call(lru).slice(8, -1) === 'Number'
+          ? <number>lru
+          : 10
+      );
 
-  func.hasCache = (key: string) => cache.has(key);
+  func.hasCache = (key: K) => cache.has(key);
+  func.rmFromCache = (key: K) => cache.del(key);
+  func.clearCache = () => cache.clear();
+  func.forceRerun = function(this: typeof func | ThisType<Fn> | void, ...args: Parameters<Fn>) {
+    const that = this === func ? undefined : this;
+    cache.del(toKey(that, ...args) as K);
+    return func.call(that, ...args);
+  }
 
   return func;
 
   function func(this: ThisType<Fn> | void, ...args: Parameters<Fn>): ReturnType<Fn> {
-    const key = (toKey || defaultToKey)(this, ...args);
+    const key = toKey(this, ...args) as K;
     try {
       const retInCache = cache.get(key);
       if (retInCache !== undefined) {
