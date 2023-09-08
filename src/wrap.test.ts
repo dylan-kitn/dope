@@ -9,7 +9,7 @@ describe('Wrap', () => {
     });
 
     const addWithCache = wrapFnInCache(add, {
-      toKey: (_that, m, n) => {
+      toKey: ([m, n]) => {
         return `${m}+${n}`;
       },
       lru: false
@@ -37,7 +37,7 @@ describe('Wrap', () => {
     });
 
     const addWithCache = wrapFnInCache(add, {
-      toKey: (_that, m, n) => {
+      toKey: ([m, n]) => {
         return `${m}+${n}`;
       },
       lru: false
@@ -60,7 +60,7 @@ describe('Wrap', () => {
     });
 
     const addWithCache = wrapFnInCache(add, {
-      toKey: (_that, m, n) => {
+      toKey: ([m, n]) => {
         return `${m}+${n}`;
       },
       lru: false
@@ -92,7 +92,7 @@ describe('Wrap', () => {
     });
 
     const addWithCache = wrapFnInCache(add, {
-      toKey: (_that, m, n) => {
+      toKey: ([m, n]) => {
         return `${m}+${n}`;
       },
       lru: false
@@ -121,7 +121,7 @@ describe('Wrap', () => {
     });
 
     const addWithCache = wrapFnInCache(add, {
-      toKey: (_that, m, n) => {
+      toKey: ([m, n]) => {
         return `${m}+${n}`;
       },
       lru: false
@@ -157,7 +157,7 @@ describe('Wrap', () => {
     });
 
     const addWithCache = wrapFnInCache(add, {
-      toKey: (_that, m, n) => {
+      toKey: ([m, n]) => {
         return `${m}+${n}`;
       },
       lru: false
@@ -240,9 +240,9 @@ describe('Wrap', () => {
     }
 
     class DemoWithCache extends Demo {
-      addByIdWithCache = wrapFnInCache(Demo.prototype.addById, (that, id) => id);
+      addByIdWithCache = wrapFnInCache(Demo.prototype.addById, ([id]) => id);
       addByIdWithCacheForceRerun = this.addByIdWithCache.forceRerun;
-      addByNameWithCache = wrapFnInCache(Demo.prototype.addByName, (that, name) => name);
+      addByNameWithCache = wrapFnInCache(Demo.prototype.addByName, ([name]) => name);
       addByNameWithCacheForceRerun = this.addByNameWithCache.forceRerun;
     }
 
